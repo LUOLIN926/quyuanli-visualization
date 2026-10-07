@@ -1,0 +1,191 @@
+/* ============================================================
+   曲辕犁结构可视化 —— 设计令牌（配色 / 字体 / 纸纹）
+   ============================================================ */
+
+:root {
+  /* 纸与墨 */
+  --paper: #f2e8d5;
+  --paper-deep: #e8d9be;
+  --paper-soft: #f7f0e2;
+  --ink: #2b2622;
+  --ink-soft: #5a5046;
+  --ink-faint: #8c7f70;
+  --cinnabar: #b03a2e;
+  --cinnabar-deep: #8e2c22;
+  --seal: #c1272d;
+  --line: rgba(43, 38, 34, 0.16);
+  --line-strong: rgba(43, 38, 34, 0.32);
+  --panel: rgba(247, 240, 226, 0.92);
+  --panel-solid: #f6efe1;
+
+  /* 字体 */
+  --font-serif: "Songti SC", "STSong", "Noto Serif SC", "Source Han Serif SC",
+    "SimSun", serif;
+  --font-kai: "Kaiti SC", "STKaiti", "KaiTi", "楷体", "Songti SC", serif;
+
+  /* 间距 */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+
+  --sidebar-w: 336px;
+  --radius: 3px;
+  --shadow-soft: 0 2px 14px rgba(60, 45, 28, 0.1);
+  --shadow-lift: 0 6px 26px rgba(60, 45, 28, 0.16);
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ---------- 纸纹基底 ---------- */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-serif);
+  background-color: var(--paper);
+  background-image:
+    /* 纤维横纹 */
+    repeating-linear-gradient(
+      0deg,
+      rgba(120, 95, 62, 0.035) 0px,
+      rgba(120, 95, 62, 0.035) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(120, 95, 62, 0.028) 0px,
+      rgba(120, 95, 62, 0.028) 1px,
+      transparent 1px,
+      transparent 6px
+    ),
+    /* 大面明暗 */
+    radial-gradient(
+      120% 90% at 50% 0%,
+      rgba(255, 250, 238, 0.75) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      100% 80% at 100% 100%,
+      rgba(160, 128, 88, 0.16) 0%,
+      transparent 55%
+    );
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 噪点层（feTurbulence data-URI，multiply 叠加） */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 900;
+  opacity: 0.42;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  background-size: 260px 260px;
+}
+
+::selection {
+  background: rgba(176, 58, 46, 0.22);
+}
+
+/* ---------- 排版基元 ---------- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-kai);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin: 0;
+}
+
+p {
+  margin: 0 0 0.75em;
+  line-height: 1.95;
+  font-size: 13.5px;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  text-align: justify;
+}
+
+strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+em {
+  font-style: normal;
+  color: var(--cinnabar);
+}
+
+/* 引文 */
+.quote {
+  font-family: var(--font-kai);
+  color: var(--ink);
+  border-left: 2px solid var(--cinnabar);
+  padding: 2px 0 2px 12px;
+  margin: 10px 0 14px;
+  font-size: 13px;
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+}
+
+.quote cite {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.12em;
+  font-style: normal;
+}
+
+/* 细墨线 + 菱形节点 */
+.rule {
+  position: relative;
+  height: 1px;
+  background: var(--line);
+  margin: var(--sp-4) 0;
+}
+
+.rule::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  background: var(--paper-soft);
+  border: 1px solid var(--line-strong);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* 印章 */
+.seal {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 2px solid var(--seal);
+  color: var(--seal);
+  font-family: var(--font-kai);
+  font-size: 12px;
+  line-height: 1.15;
+  letter-spacing: 0;
+  writing-mode: vertical-rl;
+  border-radius: 2px;
+  transform: rotate(-2deg);
+  opacity: 0.9;
+  mix-blend-mode: multiply;
+  padding: 2px;
+}

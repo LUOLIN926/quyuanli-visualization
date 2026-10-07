@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>曲辕犁结构可视化 · 中国古代工程技术</title>
+    <meta
+      name="description"
+      content="唐代江东犁（曲辕犁）三维结构可视化：部件拆解、力学机构解析与耕作流程演示"
+    />
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/layout.css" />
+    <link rel="stylesheet" href="css/components.css" />
+  </head>
+
+  <body>
+    <!-- ============ 3D 舞台 ============ -->
+    <div id="stage">
+      <canvas id="scene"></canvas>
+      <div id="labels-layer">
+        <svg id="leaders"></svg>
+      </div>
+      <div id="gauge">
+        <div class="box"><span>示意耕深</span><b id="gauge-val">12.0</b><span>cm</span></div>
+      </div>
+    </div>
+
+    <!-- ============ 导览进度 ============ -->
+    <div id="tour-progress"><div class="bar"></div><div class="dots"></div></div>
+
+    <!-- ============ 顶栏 ============ -->
+    <header id="topbar">
+      <div class="brand">
+        <h1>曲辕犁</h1>
+        <span class="sub">结构可视化 · 江东犁</span>
+      </div>
+      <nav id="chapter-nav">
+        <button data-goto="overview">器物总览</button>
+        <button data-goto="explode">部件拆解</button>
+        <button data-goto="mechanics">力学原理</button>
+        <button data-goto="flow">耕作流程</button>
+      </nav>
+      <div class="top-actions">
+        <button class="btn" id="btn-tour"><span class="glyph">▶</span>自动导览</button>
+        <button class="btn icon" id="btn-clean" title="净屏模式（H）">净屏</button>
+      </div>
+    </header>
+
+    <!-- ============ 左侧栏 ============ -->
+    <aside id="sidebar">
+      <div class="side-head">
+        <div class="vertical-title">曲辕犁</div>
+        <div class="meta">
+          <div class="t">唐 · 江东犁</div>
+          <div class="d">
+            陆龟蒙《耒耜经》<br />
+            约公元 880 年<br />
+            中国步犁定型之作
+          </div>
+        </div>
+        <div class="seal">考工</div>
+      </div>
+
+      <div class="rule"></div>
+
+      <section class="side-section" id="sec-bg">
+        <h3><span class="idx">壹</span>时代背景</h3>
+        <p>
+          唐代江南辟为全国粮仓，水田<strong>地块狭小、土质黏软</strong>。本模型以曲辕犁为对象，展示牵引、调节与工作构件的关系。晚唐农人陆龟蒙隐居吴中，于<em>《耒耜经》</em>中详录当时江东耕犁的形制与尺寸，本演示结合参考图作简化表达，不作为实物尺寸复原。
+        </p>
+        <div class="quote">
+          冶金而为之者，曰犁镵，曰犁壁；斫木而为之者，曰犁底，曰压镵，曰策额，曰犁箭，曰犁辕，曰犁梢，曰犁评，曰犁建，曰犁槃。<cite>—— 唐 · 陆龟蒙《耒耜经》</cite>
+        </div>
+      </section>
+
+      <section class="side-section" id="sec-status">
+        <h3><span class="idx">贰</span>历史地位</h3>
+        <p>
+          曲辕犁通过<strong>曲辕、犁盘与调深构件</strong>形成可操纵的耕犁结构。本模型帮助观察部件关系，具体历史年代、尺寸和性能需以文献及实物为依据。
+        </p>
+        <div class="kv"><span class="k">时代</span><span>唐 · 晚唐定型（约 9 世纪）</span></div>
+        <div class="kv"><span class="k">地域</span><span>江东（江南太湖流域）</span></div>
+        <div class="kv"><span class="k">文献</span><span>陆龟蒙《耒耜经》十一部件之记</span></div>
+        <div class="kv"><span class="k">沿用</span><span>一千二百余年，形制基本稳定</span></div>
+      </section>
+
+      <section class="side-section" id="sec-value">
+        <h3><span class="idx">叁</span>科学价值</h3>
+        <p>
+          <strong>一曰曲辕形态。</strong>弯曲主梁连接牵引端与后部木架；同尺寸对照仅比较外形，不计算省力程度。
+        </p>
+        <p>
+          <strong>二曰深浅调节。</strong>犁评沿犁箭进退，改变犁辕与犁床夹角，耕深随之增减。模型读数为示意值。
+        </p>
+        <p>
+          <strong>三曰转向解耦。</strong>前端犁盘可绕销轴转动，畜力方向与犁身解耦，便于观察牵引方向调整；动画不表示实测回转半径。
+        </p>
+        <p>
+          <strong>四曰曲面翻土。</strong>犁壁为空间曲面，切、抬、翻一次完成，垡片翻转覆盖杂草，兼得改良土壤之效。
+        </p>
+        <div class="quote">
+          进之则箭下，入土也深；退之则箭上，入土也浅。<cite>—— 《耒耜经》记犁评调深之法</cite>
+        </div>
+      </section>
+
+      <section class="side-section" id="sec-legend">
+        <h3><span class="idx">肆</span>操作指引</h3>
+        <div class="kv"><span class="k">拖拽</span><span>环绕观察犁身</span></div>
+        <div class="kv"><span class="k">滚轮</span><span>推近 / 拉远</span></div>
+        <div class="kv"><span class="k">点选</span><span>部件高亮并释义</span></div>
+        <div class="kv"><span class="k">快捷键</span><span>H 净屏 · 空格 播放 / 暂停</span></div>
+      </section>
+    </aside>
+
+    <!-- ============ 右侧部件信息卡 ============ -->
+    <aside id="part-card">
+      <div class="card-head">
+        <div>
+          <h2 id="pc-name">犁辕</h2>
+          <div class="alias" id="pc-alias">别名 · 辕</div>
+        </div>
+        <button class="btn icon" id="pc-close">×</button>
+      </div>
+      <div class="func-tag" id="pc-func">承 引</div>
+      <div id="pc-desc"></div>
+      <div class="quote" id="pc-quote"></div>
+      <div class="mech">
+        <b>力学要点</b>
+        <span id="pc-mech"></span>
+      </div>
+    </aside>
+
+    <!-- ============ 流程说明浮条 ============ -->
+    <div id="flow-note">
+      <h4 id="fn-title">牵引前行</h4>
+      <p id="fn-desc"></p>
+    </div>
+
+    <aside id="force-controls" aria-label="力示意控制">
+      <div class="force-heading">
+        <button id="force-master" aria-pressed="true">力示意 · 开</button>
+        <button id="force-labels" aria-pressed="true" title="单独显示或隐藏力的释义">释义</button>
+      </div>
+      <div class="force-options">
+        <button data-force="traction" aria-pressed="true"><i></i><span>牵引力</span><small>作用于犁</small></button>
+        <button data-force="reaction" aria-pressed="true"><i></i><span>土壤反力</span><small>作用于犁</small></button>
+        <button data-force="lift" aria-pressed="true"><i></i><span>犁面推力</span><small>作用于土</small></button>
+        <p>方向为定性示意，箭头长度不表示力的大小</p>
+      </div>
+    </aside>
+
+    <!-- ============ 字幕 ============ -->
+    <div id="subtitle"><span class="ch"></span><span class="tx"></span></div>
+
+    <!-- ============ 底部控制条 ============ -->
+    <footer id="controlbar">
+      <div id="mode-tabs">
+        <button data-mode="overview" class="on">总览</button>
+        <button data-mode="explode">拆解</button>
+        <button data-mode="mechanics">原理</button>
+        <button data-mode="flow">流程</button>
+      </div>
+
+      <div id="context-panel">
+        <!-- 总览 -->
+        <div class="ctx on" data-ctx="overview">
+          <div class="slider">
+            <span class="lbl">示意耕深</span>
+            <input type="range" id="sl-depth" min="0" max="100" value="50" />
+            <span class="val" id="sl-depth-val">12.0 cm</span>
+          </div>
+          <div class="slider">
+            <span class="lbl">转向</span>
+            <input type="range" id="sl-turn" min="-100" max="100" value="0" />
+            <span class="val" id="sl-turn-val">0°</span>
+          </div>
+          <div class="switch on" id="sw-arrows">
+            <div class="track"><i></i></div><span>力示意</span>
+          </div>
+          <div class="switch" id="sw-straight">
+            <div class="track"><i></i></div><span>同尺寸直／曲辕</span>
+          </div>
+        </div>
+
+        <!-- 拆解 -->
+        <div class="ctx" data-ctx="explode">
+          <div class="slider" style="min-width: 240px">
+            <span class="lbl">拆解</span>
+            <input type="range" id="sl-explode" min="0" max="100" value="0" style="width: 200px" />
+            <span class="val" id="sl-explode-val">0%</span>
+          </div>
+          <button class="btn" id="btn-explode-anim">自动拆解</button>
+          <button class="btn" id="btn-explode-reset">复位装配</button>
+        </div>
+
+        <!-- 原理 -->
+        <div class="ctx" data-ctx="mechanics">
+          <div class="mech-chips">
+            <button class="chip on" data-mech="curve">曲辕之妙</button>
+            <button class="chip" data-mech="depth">犁评调深</button>
+            <button class="chip" data-mech="turn">犁盘转向</button>
+            <button class="chip" data-mech="soil">犁壁翻土</button>
+            <button class="chip" data-mech="lever">犁梢杠杆</button>
+          </div>
+          <button class="btn" id="btn-mech-play">▶ 演示</button>
+        </div>
+
+        <!-- 流程 -->
+        <div class="ctx" data-ctx="flow">
+          <div class="steps" id="flow-steps"></div>
+          <button class="btn primary" id="btn-flow-play"><span class="glyph">▶</span>连续演示</button>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ============ 净屏退出 ============ -->
+    <button class="btn" id="clean-exit">退出净屏 (H)</button>
+
+    <!-- ============ 开场卡 ============ -->
+    <div id="intro-card">
+      <div class="sub-title">中 国 古 代 工 程 技 术</div>
+      <div class="divider"></div>
+      <div class="big-title">曲辕犁</div>
+      <div class="sub-title">唐 · 江东犁 结构可视化</div>
+      <div class="divider"></div>
+      <div class="seal">考工</div>
+      <button class="btn primary" id="btn-enter" style="margin-top: 12px">
+        进入演示
+      </button>
+      <div class="hint">拖拽环绕 · 点选部件 · H 键净屏录制</div>
+    </div>
+
+    <!-- ============ 脚本（经典 script，file:// 可直接运行） ============ -->
+    <script src="lib/three.min.js"></script>
+    <script src="lib/OrbitControls.js"></script>
+
+    <script src="js/data/parts-data.js"></script>
+    <script src="js/data/tour-data.js"></script>
+
+    <script src="js/materials.js"></script>
+    <script src="js/model-params.js"></script>
+    <script src="js/model-parts.js"></script>
+
+    <script src="js/labels.js"></script>
+    <script src="js/camera-rig.js"></script>
+    <script src="js/exploded.js"></script>
+    <script src="js/soil.js"></script>
+    <script src="js/mechanics.js"></script>
+    <script src="js/flow.js"></script>
+    <script src="js/interact.js"></script>
+    <script src="js/scene.js"></script>
+    <script src="js/tour.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+.DS_Store
+*.pdf
+demo/参考图片/
+demo/verification/
+demo/*修订.md
+demo/模型优化与验收记录.md
